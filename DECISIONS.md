@@ -25,3 +25,9 @@
 - Use strict Zod validation and allow-listed query construction before MongoDB. Public responses may use the requested shared cache window only when they are visitor-independent; no user-specific/admin response is public-cacheable.
 - The brief requests `SameSite=Lax` for its owner cookie. For cross-site HTTPS Preview iframe delivery, follow the Webdev runtime contract and use `SameSite=None; Secure` where needed. Do not derive cookie security settings from `NODE_ENV` or the internal HTTP request scheme. Preserve Lax for ordinary same-site contexts/local HTTP handling where appropriate and document the compatibility decision.
 - Keep `X-Frame-Options: DENY` on non-embedded production pages only if it does not break the Preview iframe; Preview must not receive DENY/SAMEORIGIN or a blocking `frame-ancestors` policy.
+
+
+## External asset-source notes
+
+- Self-hosted font files were retrieved from the Google Fonts CSS endpoint `https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400&family=Plus+Jakarta+Sans:wght@400;500&display=swap`; the stylesheet points to the corresponding `fonts.gstatic.com` WOFF2 files. The browser does not request Google Fonts at runtime.
+- Image search surfaced `https://www.veloreperfumes.com` (page identifies an India-focused brand with prices in rupees and cities such as Delhi) and `https://www.veloreparfumehouse.com` (page identifies founder Herné Van Staden). Neither was confirmed as the Egyptian client `@velo.re15`; both are excluded from the site and no assets/copy were reused.

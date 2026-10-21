@@ -1,0 +1,38 @@
+---
+export const prerender = false;
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import SectionHeading from '@/components/astro/SectionHeading.astro';
+import CatalogIsland from '@/components/react/catalog/CatalogIsland';
+import { parseProductListQuery } from '@/lib/services/query-params';
+import { listPublishedProducts } from '@/lib/services/product.service';
+import { listPublicCategories } from '@/lib/services/category.service';
+import { productListQuerySchema } from '@/lib/schemas/product.schema';
+import type { ProductListResult, PublicCategory } from '@/types/api';
+
+const parsed = parseProductListQuery(Astro.url.searchParams);
+if (!parsed.ok) Astro.response.status = 400;
+const initialFilters = parsed.ok ? parsed.data : productListQuerySchema.parse({});
+const initialData: ProductListResult = await listPublishedProducts(initialFilters).catch(() => ({
+  products: [], page: initialFilters.page, limit: initialFilters.limit, total: 0, hasMore: false, source: 'database',
+}));
+const categories: PublicCategory[] = await listPublicCategories().catch(() => []);
+const activeCategories = categories.flatMap((category) => [category, ...(category.children ?? [])]).filter((category) => category.isActive);
+const initialError = parsed.ok ? undefined : 'Some filters are invalid. Please reset the collection filters.';
+---
+<BaseLayout title="The Collection | Velore" description="Explore the Velore fragrance collection by family, wearer, volume and price.">
+  <section class="catalog-page section-space container-editorial">
+    <SectionHeading label="The collection" title="Find a fragrance that feels like yours." />
+    <p class="catalog-page__intro">Browse by family, wearer, volume and whole-pound price. Orders are arranged by WhatsApp inquiry.</p>
+    <CatalogIsland client:load initialData={initialData} initialFilters={initialFilters} categories={activeCategories} initialError={initialError} />
+  </section>
+</BaseLayout>
+
+<style>
+  .catalog-page__intro {
+    max-width: 50ch;
+    margin: 1.5rem auto 2.5rem;
+    color: var(--ivory-dim);
+    text-align: center;
+    font-size: 0.85rem;
+  }
+</style>

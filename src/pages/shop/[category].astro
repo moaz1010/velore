@@ -1,0 +1,46 @@
+---
+export const prerender = false;
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import SectionHeading from '@/components/astro/SectionHeading.astro';
+import CatalogIsland from '@/components/react/catalog/CatalogIsland';
+import { parseProductListQuery } from '@/lib/services/query-params';
+import { listPublishedProducts } from '@/lib/services/product.service';
+import { listPublicCategories } from '@/lib/services/category.service';
+import { productListQuerySchema } from '@/lib/schemas/product.schema';
+import type { ProductListResult, PublicCategory } from '@/types/api';
+
+const categorySlug = Astro.params.category ?? '';
+const categories: PublicCategory[] = await listPublicCategories().catch(() => []);
+const allCategories = categories.flatMap((category) => [category, ...(category.children ?? [])]);
+const category = allCategories.find((item) => item.slug === categorySlug && item.isActive);
+if (!category) Astro.response.status = 404;
+const searchParams = new URLSearchParams(Astro.url.searchParams);
+if (!searchParams.has('family') && category) searchParams.set('family', category.slug);
+const parsed = parseProductListQuery(searchParams);
+if (!parsed.ok) Astro.response.status = 400;
+const initialFilters = parsed.ok ? parsed.data : productListQuerySchema.parse({ family: category?.slug });
+const initialData: ProductListResult = await listPublishedProducts(initialFilters).catch(() => ({
+  products: [], page: initialFilters.page, limit: initialFilters.limit, total: 0, hasMore: false, source: 'database',
+}));
+const activeCategories = allCategories.filter((item) => item.isActive);
+const initialError = !category
+  ? 'This fragrance family could not be found.'
+  : parsed.ok ? undefined : 'Some filters are invalid. Please reset the collection filters.';
+---
+<BaseLayout title={`${category?.name ?? 'Family not found'} | Velore`} description={category?.description ?? 'Browse the Velore fragrance collection by family.'}>
+  <section class="catalog-page section-space container-editorial">
+    <SectionHeading label={category?.kind === 'collection' ? 'Collection' : 'Fragrance family'} title={category?.name ?? 'Family not found'} />
+    <p class="catalog-page__intro">Browse fragrances in this selection and refine by wearer, volume or price.</p>
+    <CatalogIsland client:load initialData={initialData} initialFilters={initialFilters} categories={activeCategories} initialError={initialError} />
+  </section>
+</BaseLayout>
+
+<style>
+  .catalog-page__intro {
+    max-width: 50ch;
+    margin: 1.5rem auto 2.5rem;
+    color: var(--ivory-dim);
+    text-align: center;
+    font-size: 0.85rem;
+  }
+</style>

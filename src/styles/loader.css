@@ -1,0 +1,38 @@
+.brand-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.9rem;
+  background: var(--obsidian);
+  pointer-events: none;
+  animation: velore-loader-exit 250ms ease 1.35s forwards;
+}
+
+.brand-loader__ribbon {
+  width: min(180px, 46vw);
+  height: auto;
+}
+
+.brand-loader__logo {
+  width: min(206px, 54vw);
+  height: auto;
+}
+
+@keyframes velore-loader-exit {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brand-loader {
+    animation: none;
+    opacity: 0;
+    visibility: hidden;
+  }
+}

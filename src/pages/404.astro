@@ -1,0 +1,18 @@
+---
+export const prerender = true;
+import BaseLayout from '@/layouts/BaseLayout.astro';
+---
+<BaseLayout title="Page not found | Velore" description="The requested Velore page could not be found." noindex>
+  <section class="not-found section-space container-editorial">
+    <p class="eyebrow">404 · Not found</p>
+    <h1>This path leads nowhere.</h1>
+    <p>The page may have moved or the address may be incomplete.</p>
+    <a class="button button--primary" href="/shop">Return to the collection</a>
+  </section>
+</BaseLayout>
+
+<style>
+  .not-found { min-height: 60vh; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 1.25rem; }
+  .not-found h1 { max-width: 12ch; font-size: clamp(3rem, 8vw, 6rem); }
+  .not-found p:not(.eyebrow) { color: var(--ivory-dim); }
+</style>

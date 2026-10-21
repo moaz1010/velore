@@ -1,0 +1,52 @@
+---
+interface Props {
+  label: string;
+  title?: string;
+  align?: 'center' | 'start';
+}
+
+const { label, title, align = 'center' } = Astro.props;
+---
+<div class:list={['section-heading', `section-heading--${align}`]}>
+  <div class="section-heading__label" aria-label={label}>
+    <span aria-hidden="true"></span>
+    <p class="eyebrow">{label}</p>
+    <span aria-hidden="true"></span>
+  </div>
+  {title && <h2 class="section-heading__title">{title}</h2>}
+</div>
+
+<style>
+  .section-heading {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .section-heading--center {
+    align-items: center;
+    text-align: center;
+  }
+
+  .section-heading--start {
+    align-items: flex-start;
+    text-align: start;
+  }
+
+  .section-heading__label {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+
+  .section-heading__label span {
+    width: clamp(1.6rem, 5vw, 3.5rem);
+    height: 1px;
+    background: var(--gold-muted);
+  }
+
+  .section-heading__title {
+    max-width: 18ch;
+    font-size: clamp(2.35rem, 5vw, 4.5rem);
+  }
+</style>
