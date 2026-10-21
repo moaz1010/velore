@@ -6,8 +6,9 @@ export default function DeliveryNote() {
   const [status, setStatus] = useState<'loading' | 'ready' | 'unavailable'>('loading');
   useEffect(() => {
     let active = true;
-    fetch('/api/settings')
-      .then(async (response) => {
+    async function refresh() {
+      try {
+        const response = await fetch('/api/settings', { cache: 'no-store' });
         if (!response.ok) throw new Error('Settings unavailable.');
         const payload: unknown = await response.json();
         const parsed = publicSettingsEnvelopeSchema.safeParse(payload);
@@ -16,9 +17,18 @@ export default function DeliveryNote() {
           setNote(parsed.data.data.deliveryNote.trim());
           setStatus('ready');
         }
-      })
-      .catch(() => { if (active) setStatus('unavailable'); });
-    return () => { active = false; };
+      } catch {
+        if (active) setStatus((current) => current === 'loading' ? 'unavailable' : current);
+      }
+    }
+    void refresh();
+    const interval = window.setInterval(() => void refresh(), 30_000);
+    window.addEventListener('focus', refresh);
+    return () => {
+      active = false;
+      window.clearInterval(interval);
+      window.removeEventListener('focus', refresh);
+    };
   }, []);
 
   return (

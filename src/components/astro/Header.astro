@@ -1,8 +1,10 @@
 ---
 import Logo from '@/components/astro/Logo.astro';
 import InquiryBadge from '@/components/react/inquiry/InquiryBadge';
+import AnnouncementBar from '@/components/react/social/AnnouncementBar';
 import '@/styles/inquiry.css';
 ---
+<AnnouncementBar client:load />
 <header class="site-header">
   <div class="site-header__inner container-editorial">
     <a class="site-header__brand" href="/" aria-label="Velore home">

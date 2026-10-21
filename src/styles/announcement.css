@@ -1,0 +1,19 @@
+.site-announcement {
+  position: relative;
+  z-index: 41;
+  padding: 0.55rem 1rem;
+  border-bottom: 1px solid rgb(197 160 89 / 20%);
+  color: #e3d5ba;
+  background: #111;
+  font-size: 0.65rem;
+  letter-spacing: 0.11em;
+  text-align: center;
+}
+
+@media (max-width: 640px) {
+  .site-announcement {
+    padding: 0.48rem 0.7rem;
+    font-size: 0.58rem;
+    letter-spacing: 0.07em;
+  }
+}

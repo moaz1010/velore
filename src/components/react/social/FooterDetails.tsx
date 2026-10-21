@@ -28,19 +28,28 @@ export default function FooterDetails({ initialInstagramHandle, initialWhatsappN
 
   useEffect(() => {
     let active = true;
-    fetch('/api/settings')
-      .then((response) => response.json() as Promise<unknown>)
-      .then((payload) => {
+    async function refresh() {
+      try {
+        const response = await fetch('/api/settings', { cache: 'no-store' });
+        if (!response.ok) return;
+        const payload: unknown = await response.json();
         const parsed = responseSchema.safeParse(payload);
         if (!active || !parsed.success) return;
         const settings = parsed.data.data;
         if (settings.instagramHandle) setInstagramHandle(settings.instagramHandle);
         if (settings.whatsappNumber !== undefined) setWhatsappNumber(settings.whatsappNumber);
         if (settings.deliveryNote !== undefined) setDeliveryNote(settings.deliveryNote);
-      })
-      .catch(() => undefined);
+      } catch {
+        // Preserve the last valid public settings during a temporary API failure.
+      }
+    }
+    void refresh();
+    const interval = window.setInterval(() => void refresh(), 30_000);
+    window.addEventListener('focus', refresh);
     return () => {
       active = false;
+      window.clearInterval(interval);
+      window.removeEventListener('focus', refresh);
     };
   }, []);
 

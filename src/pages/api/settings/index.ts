@@ -8,7 +8,7 @@ export const GET: APIRoute = async () => {
   try {
     const settings = await getPublicSettings();
     return successResponse(settings, {
-      headers: { 'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300' },
+      headers: { 'Cache-Control': 'public, s-maxage=30, stale-while-revalidate=30' },
     });
   } catch {
     return failureResponse(
