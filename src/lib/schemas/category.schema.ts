@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { imageLocationSchema } from '@/lib/schemas/product.schema';
 
 export const categorySchema = z
   .object({
@@ -6,7 +7,7 @@ export const categorySchema = z
     name: z.string().trim().min(1).max(80),
     kind: z.enum(['family', 'collection']),
     description: z.string().trim().max(500).optional(),
-    image: z.string().trim().max(2048).optional(),
+    image: z.string().trim().max(2048).refine((value) => value === '' || imageLocationSchema.safeParse(value).success, 'Use a site-relative path or HTTPS image URL.').optional(),
     order: z.number().int().min(0).max(10_000),
     parentId: z.string().regex(/^[a-f\d]{24}$/i).optional(),
     isActive: z.boolean(),

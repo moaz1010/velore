@@ -15,7 +15,7 @@ const productVariantSchema = z
   })
   .strict();
 
-const imageLocationSchema = z.string().trim().min(1).max(2048).refine((value) => {
+export const imageLocationSchema = z.string().trim().min(1).max(2048).refine((value) => {
   if (value.startsWith('/') && !value.startsWith('//')) return true;
   try {
     return new URL(value).protocol === 'https:';
