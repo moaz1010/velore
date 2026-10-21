@@ -9,13 +9,12 @@
     "build": "astro build",
     "preview": "astro preview --host 0.0.0.0 --port 3000",
     "typecheck": "astro check",
-    "lint": "eslint src --max-warnings=0",
+    "lint": "eslint src scripts --max-warnings=0",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test": "vitest run",
     "test:e2e": "playwright test",
     "seed": "tsx scripts/seed.ts",
-    "create-admin": "tsx scripts/create-admin.ts",
     "brand:assets": "tsx scripts/prepare-brand-assets.ts"
   },
   "dependencies": {

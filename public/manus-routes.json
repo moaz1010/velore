@@ -1,0 +1,12 @@
+{
+  "routes": [
+    { "path": "/", "title": "Home" },
+    { "path": "/shop", "title": "Shop" },
+    { "path": "/shop/:category", "title": "Fragrance family" },
+    { "path": "/product/:slug", "title": "Fragrance" },
+    { "path": "/discovery-sets", "title": "Discovery sets" },
+    { "path": "/about", "title": "About" },
+    { "path": "/contact", "title": "Contact" },
+    { "path": "/delivery", "title": "Delivery" }
+  ]
+}
