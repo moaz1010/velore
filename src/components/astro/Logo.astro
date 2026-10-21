@@ -1,0 +1,39 @@
+---
+type Variant = 'lockup' | 'monogram' | 'wordmark';
+
+interface Props {
+  variant?: Variant;
+  class?: string;
+  width?: number;
+  height?: number;
+}
+
+const { variant = 'lockup', class: className = '', width, height } = Astro.props;
+// Temporary art is a description-based placeholder, not an extraction from the missing client JPEG.
+// Replace these paths with client-supplied SVG files without changing this component.
+const LOGO_PATHS: Record<Variant, string> = {
+  lockup: '/brand/logo-lockup.png',
+  monogram: '/brand/monogram.png',
+  wordmark: '/brand/wordmark.png',
+};
+const DEFAULT_DIMENSIONS: Record<Variant, { width: number; height: number }> = {
+  lockup: { width: 360, height: 300 },
+  monogram: { width: 88, height: 88 },
+  wordmark: { width: 360, height: 96 },
+};
+const dimensions = DEFAULT_DIMENSIONS[variant];
+const altText: Record<Variant, string> = {
+  lockup: 'Velore Eau de Parfum — temporary placeholder logo',
+  monogram: 'Velore monogram — temporary placeholder',
+  wordmark: 'Velore wordmark — temporary placeholder',
+};
+---
+<img
+  src={LOGO_PATHS[variant]}
+  alt={altText[variant]}
+  width={width ?? dimensions.width}
+  height={height ?? dimensions.height}
+  class={className}
+  loading={variant === 'lockup' ? 'eager' : 'lazy'}
+  decoding="async"
+/>
