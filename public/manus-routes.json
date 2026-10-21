@@ -7,6 +7,13 @@
     { "path": "/discovery-sets", "title": "Discovery sets" },
     { "path": "/about", "title": "About" },
     { "path": "/contact", "title": "Contact" },
-    { "path": "/delivery", "title": "Delivery" }
+    { "path": "/delivery", "title": "Delivery" },
+    { "path": "/admin/login", "title": "Owner sign in" },
+    { "path": "/admin", "title": "Admin overview" },
+    { "path": "/admin/products", "title": "Admin products" },
+    { "path": "/admin/products/new", "title": "Create product" },
+    { "path": "/admin/products/:id", "title": "Edit product" },
+    { "path": "/admin/categories", "title": "Admin categories" },
+    { "path": "/admin/settings", "title": "Admin settings" }
   ]
 }
