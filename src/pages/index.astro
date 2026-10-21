@@ -2,6 +2,7 @@
 export const prerender = true;
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import SectionHeading from '@/components/astro/SectionHeading.astro';
+import Logo from '@/components/astro/Logo.astro';
 import Marquee from '@/components/astro/Marquee.astro';
 import HeroSection from '@/components/react/hero/HeroSection';
 import FeaturedCollection from '@/components/react/home/FeaturedCollection';
@@ -49,7 +50,7 @@ import '@/styles/catalog.css';
       <div class="home-discovery__art" aria-hidden="true">
         <span class="home-discovery__orbit home-discovery__orbit--outer"></span>
         <span class="home-discovery__orbit home-discovery__orbit--inner"></span>
-        <span class="home-discovery__mark">V</span>
+        <Logo variant="monogram" width={190} height={193} class="home-discovery__mark" />
         <span class="home-discovery__caption">SAMPLE SET</span>
       </div>
     </div>
@@ -69,7 +70,7 @@ import '@/styles/catalog.css';
       <p>Approved brand history and creative notes will be added when supplied by Velore.</p>
       <a class="home-section__link" href="/about">About the brand <span aria-hidden="true">↗</span></a>
     </div>
-    <div class="home-story__monogram" aria-hidden="true">V</div>
+    <Logo variant="monogram" width={300} height={305} class="home-story__monogram" />
   </section>
 </BaseLayout>
 
@@ -171,10 +172,7 @@ import '@/styles/catalog.css';
     border-color: rgb(197 160 89 / 45%);
   }
 
-  .home-discovery__mark {
-    color: var(--gold);
-    font: 300 clamp(7rem, 18vw, 15rem)/1 'Cormorant Garamond', Georgia, serif;
-  }
+  .home-discovery__mark { width: min(40vw, 11.875rem); height: auto; object-fit: contain; }
 
   .home-discovery__caption {
     position: absolute;
@@ -200,10 +198,7 @@ import '@/styles/catalog.css';
     color: var(--ivory-dim);
   }
 
-  .home-story__monogram {
-    color: rgb(197 160 89 / 20%);
-    font: 300 clamp(8rem, 22vw, 20rem)/0.8 'Cormorant Garamond', Georgia, serif;
-  }
+  .home-story__monogram { width: min(28vw, 18.75rem); height: auto; opacity: 0.22; object-fit: contain; }
 
   @media (max-width: 640px) {
     .home-discovery__inner {

@@ -1,4 +1,3 @@
-// Temporary placeholder monogram; replace with the client-supplied logo asset.
 export default {
-  logoUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519664035766000/tXmgxrvrceneQRkz.png",
+  logoUrl: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519664035766000/bvWWyaJHHoJtEAht.png',
 };

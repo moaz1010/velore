@@ -1,4 +1,3 @@
-import { existsSync } from 'node:fs';
 import { mkdir, readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import sharp from 'sharp';
@@ -9,83 +8,101 @@ const sourcePath = join(root, 'assets-source', 'VeloreLogo.jpeg');
 const lockupPath = join(brandDir, 'logo-lockup.png');
 const monogramPath = join(brandDir, 'monogram.png');
 const wordmarkPath = join(brandDir, 'wordmark.png');
-const goldOnObsidian = { r: 11, g: 11, b: 11, alpha: 1 };
+const background = { r: 11, g: 11, b: 11, alpha: 1 };
 
-async function rasterizeSvg(filename: string, width: number): Promise<Buffer> {
-  const svg = await readFile(join(brandDir, filename));
-  return sharp(svg, { density: 192 }).resize({ width, fit: 'inside' }).png().toBuffer();
+interface RelativeCrop {
+  left: number;
+  top: number;
+  width: number;
+  height: number;
 }
 
-async function thresholdNearBlack(source: string): Promise<Buffer> {
-  const { data, info } = await sharp(source).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
-  const pixels = new Uint8Array(data);
-  for (let index = 0; index < pixels.length; index += info.channels) {
-    const brightness = Math.max(pixels[index] ?? 0, pixels[index + 1] ?? 0, pixels[index + 2] ?? 0);
-    const originalAlpha = pixels[index + 3] ?? 255;
-    const softAlpha = Math.max(0, Math.min(255, Math.round(((brightness - 8) / 28) * 255)));
-    pixels[index + 3] = Math.min(originalAlpha, softAlpha);
+/**
+ * Extract one area from the client-supplied black-background JPEG and make only
+ * near-black pixels transparent. This is a deterministic raster extraction;
+ * the source file is never overwritten.
+ */
+async function extractTransparent(crop: RelativeCrop, imageWidth: number, imageHeight: number): Promise<Buffer> {
+  const left = Math.round(crop.left * imageWidth);
+  const top = Math.round(crop.top * imageHeight);
+  const width = Math.min(imageWidth - left, Math.round(crop.width * imageWidth));
+  const height = Math.min(imageHeight - top, Math.round(crop.height * imageHeight));
+  const { data, info } = await sharp(sourcePath)
+    .extract({ left, top, width, height })
+    .ensureAlpha()
+    .raw()
+    .toBuffer({ resolveWithObject: true });
+
+  for (let index = 0; index < data.length; index += info.channels) {
+    const red = data[index] ?? 0;
+    const green = data[index + 1] ?? 0;
+    const blue = data[index + 2] ?? 0;
+    const brightness = Math.max(red, green, blue);
+    const originalAlpha = data[index + 3] ?? 255;
+    const warmGold = red >= green - 3 && green >= blue - 3 && red > 35;
+    const neutralHighlight = brightness >= 84 && brightness - Math.min(red, green, blue) <= 24;
+    const softAlpha = warmGold
+      ? Math.round(((brightness - 6) / 32) * 255)
+      : Math.round(((brightness - 48) / 72) * 255);
+    const colorAlpha = warmGold || neutralHighlight ? Math.max(0, Math.min(255, softAlpha)) : 0;
+    data[index + 3] = Math.min(originalAlpha, colorAlpha);
   }
-  return sharp(Buffer.from(pixels), {
-    raw: { width: info.width, height: info.height, channels: info.channels },
+
+  const result = await sharp(data, {
+    raw: { width: info.width, height: info.height, channels: 4 },
   })
     .trim({ background: { r: 0, g: 0, b: 0, alpha: 0 }, threshold: 4 })
     .png()
     .toBuffer();
+  const metadata = await sharp(result).metadata();
+  if (!metadata.width || !metadata.height) throw new Error('A requested logo crop was empty after removing its black background.');
+  return result;
 }
 
-async function writeTemporaryAssets(): Promise<void> {
-  const lockup = await rasterizeSvg('temporary-logo-lockup.svg', 1200);
-  const monogram = await rasterizeSvg('temporary-monogram.svg', 600);
-  const wordmark = await rasterizeSvg('temporary-wordmark.svg', 1000);
+async function main(): Promise<void> {
+  await mkdir(brandDir, { recursive: true });
+  const source = await readFile(sourcePath).catch(() => {
+    throw new Error('Missing assets-source/VeloreLogo.jpeg. Add the client-supplied source before running pnpm brand:assets.');
+  });
+  const metadata = await sharp(source).metadata();
+  if (!metadata.width || !metadata.height) throw new Error('Could not read the supplied logo dimensions.');
+
+  // Crop boxes are relative to the supplied 1254 × 1254 composition. They
+  // include enough surrounding margin for transparent trimming after extraction.
+  const lockup = await extractTransparent({ left: 0.12, top: 0.17, width: 0.76, height: 0.60 }, metadata.width, metadata.height);
+  const monogram = await extractTransparent({ left: 0.31, top: 0.18, width: 0.38, height: 0.38 }, metadata.width, metadata.height);
+  const wordmark = await extractTransparent({ left: 0.12, top: 0.55, width: 0.76, height: 0.23 }, metadata.width, metadata.height);
+
   await Promise.all([
     sharp(lockup).png().toFile(lockupPath),
     sharp(monogram).png().toFile(monogramPath),
     sharp(wordmark).png().toFile(wordmarkPath),
   ]);
-  console.warn('VeloreLogo.jpeg was not found; generated clearly temporary placeholder PNGs, not client extractions.');
-}
 
-async function writeExtractedAssets(): Promise<void> {
-  const fullLogo = await thresholdNearBlack(sourcePath);
-  const { width, height } = await sharp(fullLogo).metadata();
-  if (!width || !height) throw new Error('Could not determine the supplied logo dimensions.');
-  const trimmedLogo = await sharp(fullLogo).trim({ background: { r: 0, g: 0, b: 0, alpha: 0 }, threshold: 4 }).png().toBuffer();
-  const trimmedMetadata = await sharp(trimmedLogo).metadata();
-  if (!trimmedMetadata.width || !trimmedMetadata.height) throw new Error('The supplied logo has no visible pixels after thresholding.');
-  const logoWidth = trimmedMetadata.width;
-  const logoHeight = trimmedMetadata.height;
-  const monogramHeight = Math.max(1, Math.round(logoHeight * 0.46));
-  const wordmarkTop = Math.round(logoHeight * 0.47);
-  const wordmarkHeight = Math.max(1, Math.round(logoHeight * 0.3));
-  await Promise.all([
-    sharp(trimmedLogo).png().toFile(lockupPath),
-    sharp(trimmedLogo)
-      .extract({ left: 0, top: 0, width: logoWidth, height: Math.min(monogramHeight, logoHeight) })
-      .trim({ background: { r: 0, g: 0, b: 0, alpha: 0 }, threshold: 4 })
-      .png()
-      .toFile(monogramPath),
-    sharp(trimmedLogo)
-      .extract({ left: 0, top: Math.min(wordmarkTop, logoHeight - 1), width: logoWidth, height: Math.min(wordmarkHeight, logoHeight - wordmarkTop) })
-      .trim({ background: { r: 0, g: 0, b: 0, alpha: 0 }, threshold: 4 })
-      .png()
-      .toFile(wordmarkPath),
-  ]);
-  console.info('Created transparent raster extractions from assets-source/VeloreLogo.jpeg. Review crop boundaries against the original before client delivery.');
-}
+  await sharp(monogram)
+    .resize(64, 64, { fit: 'contain', background })
+    .png()
+    .toFile(join(brandDir, 'favicon.png'));
+  await sharp(monogram)
+    .resize(180, 180, { fit: 'contain', background })
+    .png()
+    .toFile(join(brandDir, 'apple-touch-icon.png'));
 
-async function main(): Promise<void> {
-  await mkdir(brandDir, { recursive: true });
-  if (existsSync(sourcePath)) await writeExtractedAssets();
-  else await writeTemporaryAssets();
-
-  const monogram = await readFile(monogramPath);
-  await sharp(monogram).resize(64, 64, { fit: 'contain', background: goldOnObsidian }).png().toFile(join(brandDir, 'favicon.png'));
-  await sharp(monogram).resize(180, 180, { fit: 'contain', background: goldOnObsidian }).png().toFile(join(brandDir, 'apple-touch-icon.png'));
-  const lockup = await sharp(lockupPath).resize(760, 500, { fit: 'contain' }).png().toBuffer();
-  await sharp({ create: { width: 1200, height: 630, channels: 4, background: goldOnObsidian } })
-    .composite([{ input: lockup, left: 220, top: 65 }])
+  const socialLockup = await sharp(lockup).resize(760, 500, { fit: 'inside' }).png().toBuffer();
+  await sharp({ create: { width: 1200, height: 630, channels: 4, background } })
+    .composite([{ input: socialLockup, left: 220, top: 65 }])
     .png()
     .toFile(join(brandDir, 'og-image.png'));
+
+  const [lockupInfo, monogramInfo, wordmarkInfo] = await Promise.all([
+    sharp(lockupPath).metadata(),
+    sharp(monogramPath).metadata(),
+    sharp(wordmarkPath).metadata(),
+  ]);
+  console.info('Created transparent extractions from the supplied VeloreLogo.jpeg:');
+  console.info(`  lockup ${lockupInfo.width}×${lockupInfo.height}`);
+  console.info(`  monogram ${monogramInfo.width}×${monogramInfo.height}`);
+  console.info(`  wordmark ${wordmarkInfo.width}×${wordmarkInfo.height}`);
 }
 
 await main();
