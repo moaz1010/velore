@@ -1,0 +1,9 @@
+---
+import AdminLayout from '@/layouts/AdminLayout.astro';
+import { AdminRoot } from '@/components/react/admin/AdminRoot';
+
+export const prerender = false;
+---
+<AdminLayout title="Categories">
+  <AdminRoot client:load view="categories" />
+</AdminLayout>

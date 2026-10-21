@@ -1,0 +1,9 @@
+---
+import AdminLayout from '@/layouts/AdminLayout.astro';
+import { AdminLogin } from '@/components/react/admin/AdminLogin';
+
+export const prerender = false;
+---
+<AdminLayout title="Owner sign in">
+  <AdminLogin client:load />
+</AdminLayout>

@@ -1,0 +1,9 @@
+---
+import AdminLayout from '@/layouts/AdminLayout.astro';
+import { AdminRoot } from '@/components/react/admin/AdminRoot';
+
+export const prerender = false;
+---
+<AdminLayout title="Overview">
+  <AdminRoot client:load view="dashboard" />
+</AdminLayout>
