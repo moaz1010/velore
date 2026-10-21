@@ -1,0 +1,50 @@
+---
+export const prerender = true;
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import SectionHeading from '@/components/astro/SectionHeading.astro';
+---
+<BaseLayout title="About Velore" description="An introduction to how to explore the Velore fragrance collection.">
+  <section class="about-page section-space container-editorial">
+    <p class="eyebrow">The Velore story</p>
+    <h1>Fragrance, explored through notes and families.</h1>
+    <p class="about-page__lede">The collection is organized to help you compare scent families, notes, concentration and how each fragrance is described.</p>
+    <div class="about-page__rule" aria-hidden="true"></div>
+    <div class="about-page__content">
+      <SectionHeading align="start" label="A note on this page" title="Brand history, in Velore's own words." />
+      <p>Founder details, brand history and other approved story material have not yet been supplied. This section is intentionally neutral and should be replaced with Velore's approved copy before launch.</p>
+      <a class="button button--outline" href="/shop">Explore the collection <span aria-hidden="true">↗</span></a>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .about-page h1 {
+    max-width: 13ch;
+    margin-block: 1.2rem;
+    font-size: clamp(3rem, 7vw, 6.5rem);
+    line-height: .95;
+  }
+
+  .about-page__lede {
+    max-width: 48ch;
+    color: var(--ivory-dim);
+    font-size: 1rem;
+  }
+
+  .about-page__rule {
+    height: 1px;
+    margin-block: clamp(3rem, 8vw, 7rem);
+    background: var(--hairline);
+  }
+
+  .about-page__content {
+    display: grid;
+    max-width: 46rem;
+    gap: 1.5rem;
+  }
+
+  .about-page__content > p {
+    color: var(--ivory-dim);
+    line-height: 1.8;
+  }
+</style>

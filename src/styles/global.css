@@ -1,0 +1,166 @@
+@font-face {
+  font-family: 'Cormorant Garamond';
+  src: url('/fonts/cormorant-garamond-300-latin.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Cormorant Garamond';
+  src: url('/fonts/cormorant-garamond-400-latin.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  src: url('/fonts/plus-jakarta-sans-400-latin.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  src: url('/fonts/plus-jakarta-sans-500-latin.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+}
+
+:root {
+  color-scheme: dark;
+  --obsidian: #0b0b0b;
+  --obsidian-800: #141414;
+  --obsidian-700: #1c1c1c;
+  --obsidian-600: #262626;
+  --gold: #c5a059;
+  --gold-bright: #d4af37;
+  --gold-muted: #8e7340;
+  --ivory: #f5f2eb;
+  --ivory-dim: #cfcac0;
+  --hairline: rgb(197 160 89 / 28%);
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: var(--obsidian);
+  color: var(--ivory);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  background: var(--obsidian);
+}
+
+body {
+  min-width: 320px;
+  margin: 0;
+  background: var(--obsidian);
+  color: var(--ivory);
+  font-size: 0.95rem;
+  line-height: 1.7;
+}
+
+body,
+button,
+input,
+select,
+textarea {
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+}
+
+button,
+a,
+input,
+select,
+textarea {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button {
+  color: inherit;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  margin: 0;
+  color: var(--ivory);
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-weight: 300;
+  line-height: 1.05;
+}
+
+p {
+  margin: 0;
+}
+
+::selection {
+  color: var(--obsidian);
+  background: var(--gold-bright);
+}
+
+:focus-visible {
+  outline: 2px solid var(--gold-bright);
+  outline-offset: 4px;
+}
+
+.container-editorial {
+  width: min(100% - 3rem, 88rem);
+  margin-inline: auto;
+}
+
+.section-space {
+  padding-block: clamp(5rem, 10vw, 9rem);
+}
+
+.eyebrow {
+  color: var(--gold);
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+.gold-rule {
+  height: 1px;
+  background: var(--hairline);
+}
+
+@media (max-width: 640px) {
+  .container-editorial {
+    width: min(100% - 2rem, 88rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

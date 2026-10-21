@@ -1,0 +1,47 @@
+---
+interface Props {
+  text?: string;
+}
+const { text = 'EAU DE PARFUM · DISCOVER YOUR SCENT · VELORE ·' } = Astro.props;
+const items = Array.from({ length: 4 }, (_, index) => `${text} ${index + 1}`);
+---
+<div class="marquee" aria-label={text}>
+  <div class="marquee__track" aria-hidden="true">
+    {items.map((item) => <span class="marquee__item">{item}</span>)}
+  </div>
+</div>
+
+<style>
+  .marquee {
+    overflow: hidden;
+    border-block: 1px solid rgb(197 160 89 / 19%);
+    padding-block: 1rem;
+    color: var(--gold);
+  }
+
+  .marquee__track {
+    display: flex;
+    width: max-content;
+    animation: marquee-slide 34s linear infinite;
+  }
+
+  .marquee__item {
+    padding-inline: 2.5rem;
+    font-size: 0.62rem;
+    letter-spacing: 0.3em;
+    white-space: nowrap;
+  }
+
+  @keyframes marquee-slide {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .marquee__track {
+      animation: none;
+      transform: none;
+    }
+  }
+</style>

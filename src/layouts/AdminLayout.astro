@@ -1,0 +1,20 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+---
+<BaseLayout title={`${title} | Velore Admin`} noindex hideChrome>
+  <div class="admin-shell"><slot /></div>
+</BaseLayout>
+
+<style>
+  .admin-shell {
+    min-height: 100vh;
+    background: #0b0b0b;
+    color: #f5f2eb;
+  }
+</style>

@@ -1,0 +1,54 @@
+---
+import '@/styles/tailwind.css';
+import '@/styles/global.css';
+import '@/styles/hero.css';
+import '@/styles/catalog.css';
+import '@/styles/product.css';
+import '@/styles/loader.css';
+import SEO from '@/components/astro/SEO.astro';
+import Header from '@/components/astro/Header.astro';
+import Footer from '@/components/astro/Footer.astro';
+import Logo from '@/components/astro/Logo.astro';
+import FlameDraw from '@/components/react/hero/FlameDraw';
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  noindex?: boolean;
+  hideChrome?: boolean;
+}
+
+const {
+  title = 'Velore | Eau de Parfum',
+  description = 'Discover fragrance families and build an order inquiry with Velore.',
+  image,
+  noindex = false,
+  hideChrome = false,
+} = Astro.props;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0B0B0B" />
+    <link rel="icon" type="image/svg+xml" href="/brand/favicon.svg" />
+    <link rel="apple-touch-icon" href="/brand/apple-touch-icon.png" />
+    <link rel="preload" href="/fonts/cormorant-garamond-300-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/plus-jakarta-sans-400-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <SEO title={title} description={description} image={image} noindex={noindex} />
+    <slot name="head" />
+  </head>
+  <body>
+    {!hideChrome && (
+      <div class="brand-loader" aria-hidden="true">
+        <FlameDraw client:load className="brand-loader__ribbon" idPrefix="loader" />
+        <Logo variant="lockup" width={206} height={172} class="brand-loader__logo" />
+      </div>
+    )}
+    {!hideChrome && <Header />}
+    <main id="main-content"><slot /></main>
+    {!hideChrome && <Footer />}
+  </body>
+</html>

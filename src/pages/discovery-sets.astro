@@ -1,0 +1,46 @@
+---
+export const prerender = false;
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import SectionHeading from '@/components/astro/SectionHeading.astro';
+import ProductCard from '@/components/astro/ProductCard.astro';
+import { listDiscoverySets } from '@/lib/services/product.service';
+import '@/styles/catalog.css';
+
+const sets = await listDiscoverySets().catch(() => []);
+---
+<BaseLayout title="Discovery Sets | Velore" description="Explore Velore discovery sets and send an order inquiry over WhatsApp.">
+  <section class="discovery-page section-space container-editorial">
+    <SectionHeading label="A considered introduction" title="Discovery sets" />
+    <p class="discovery-page__intro">A smaller-format way to explore the notes. Each set lists its contents on the product page.</p>
+    {sets.length > 0 ? (
+      <div class="discovery-page__grid">
+        {sets.map((set) => <ProductCard product={set} />)}
+      </div>
+    ) : (
+      <p class="catalog-message">No discovery sets are currently available.</p>
+    )}
+  </section>
+</BaseLayout>
+
+<style>
+  .discovery-page__intro {
+    max-width: 48ch;
+    margin: 1.5rem auto 3rem;
+    color: var(--ivory-dim);
+    text-align: center;
+  }
+
+  .discovery-page__grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  @media (max-width: 900px) {
+    .discovery-page__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  }
+
+  @media (max-width: 640px) {
+    .discovery-page__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .8rem; }
+  }
+</style>
