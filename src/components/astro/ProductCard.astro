@@ -1,0 +1,41 @@
+---
+import PlaceholderBottle from '@/components/astro/PlaceholderBottle.astro';
+import { formatEGP, getLowestPrice } from '@/lib/format';
+import type { PublicProduct } from '@/types/api';
+
+interface Props {
+  product: PublicProduct;
+}
+
+const { product } = Astro.props;
+const primaryImage = product.images.find((image) => image.isPrimary) ?? product.images[0];
+const showPlaceholder = product.isPlaceholder || !primaryImage || primaryImage.isPlaceholder;
+const lowestPrice = getLowestPrice(product.variants);
+const genderLabel = product.gender === 'him' ? 'For him' : product.gender === 'her' ? 'For her' : 'Unisex';
+---
+<article class="product-card">
+  <a class="product-card__link" href={`/product/${product.slug}`} aria-label={`View ${product.name}`}>
+    <div class="product-card__visual">
+      {showPlaceholder ? (
+        <PlaceholderBottle name={product.name} label="SAMPLE" class="product-card__placeholder" />
+      ) : (
+        <img
+          class="product-card__image"
+          src={primaryImage.url}
+          alt={primaryImage.alt}
+          width="800"
+          height="1000"
+          loading="lazy"
+          decoding="async"
+        />
+      )}
+      {product.badges.length > 0 && <span class="product-card__badge">{product.badges[0]}</span>}
+      {product.isPlaceholder && <span class="product-card__sample">Sample</span>}
+    </div>
+    <div class="product-card__details">
+      <div class="product-card__meta"><span>{genderLabel}</span><span>{product.concentration}</span></div>
+      <h3>{product.name}</h3>
+      <p class="product-card__price">{lowestPrice === null ? 'Price not set' : `From ${formatEGP(lowestPrice)}`}</p>
+    </div>
+  </a>
+</article>

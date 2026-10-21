@@ -1,0 +1,15 @@
+---
+export const prerender = true;
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import SectionHeading from '@/components/astro/SectionHeading.astro';
+import DeliveryNote from '@/components/react/social/DeliveryNote';
+import '@/styles/contact.css';
+---
+<BaseLayout title="Delivery Information | Velore" description="Read the delivery information currently provided by Velore.">
+  <section class="delivery-page section-space container-editorial">
+    <SectionHeading label="Delivery" title="Details to confirm with Velore." />
+    <p class="contact-page__intro">GremLins handles delivery zones. The applicable delivery details are shown below when provided by Velore.</p>
+    <DeliveryNote client:load />
+    <a class="button button--outline" href="/contact">Contact Velore <span aria-hidden="true">↗</span></a>
+  </section>
+</BaseLayout>

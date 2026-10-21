@@ -1,0 +1,225 @@
+---
+export const prerender = true;
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import SectionHeading from '@/components/astro/SectionHeading.astro';
+import Marquee from '@/components/astro/Marquee.astro';
+import HeroSection from '@/components/react/hero/HeroSection';
+import FeaturedCollection from '@/components/react/home/FeaturedCollection';
+import FragranceFamilies from '@/components/react/home/FragranceFamilies';
+import Testimonials from '@/components/react/social/Testimonials';
+import '@/styles/catalog.css';
+---
+<BaseLayout
+  title="Velore | Discover the Collection"
+  description="Explore Velore fragrance families and build a WhatsApp order inquiry."
+>
+  <HeroSection client:load />
+  <Marquee />
+
+  <section id="featured" class="home-section section-space container-editorial">
+    <SectionHeading label="A first impression" title="Selected fragrances" />
+    <div class="home-section__content">
+      <FeaturedCollection client:visible />
+    </div>
+    <a class="home-section__link" href="/shop">View the collection <span aria-hidden="true">↗</span></a>
+  </section>
+
+  <section class="home-families section-space">
+    <div class="container-editorial">
+      <SectionHeading label="Find your scent" title="Explore fragrance families" />
+      <nav class="gender-quick-filters" aria-label="Shop by wearer">
+        <a href="/shop?gender=him">Him <span aria-hidden="true">↗</span></a>
+        <a href="/shop?gender=her">Her <span aria-hidden="true">↗</span></a>
+        <a href="/shop?gender=unisex">Unisex <span aria-hidden="true">↗</span></a>
+      </nav>
+      <div class="home-section__content">
+        <FragranceFamilies client:visible />
+      </div>
+    </div>
+  </section>
+
+  <section class="home-discovery section-space">
+    <div class="home-discovery__inner container-editorial">
+      <div class="home-discovery__copy">
+        <p class="eyebrow">A considered introduction</p>
+        <h2>Meet the discovery set.</h2>
+        <p>Explore a smaller-format sample collection and send an inquiry when you are ready.</p>
+        <a class="button button--outline" href="/discovery-sets">Explore discovery sets <span aria-hidden="true">↗</span></a>
+      </div>
+      <div class="home-discovery__art" aria-hidden="true">
+        <span class="home-discovery__orbit home-discovery__orbit--outer"></span>
+        <span class="home-discovery__orbit home-discovery__orbit--inner"></span>
+        <span class="home-discovery__mark">V</span>
+        <span class="home-discovery__caption">SAMPLE SET</span>
+      </div>
+    </div>
+  </section>
+
+  {import.meta.env.DEV && (
+    <section class="home-reviews section-space container-editorial" aria-labelledby="sample-reviews-heading">
+      <SectionHeading label="Social proof" title="Customer notes" />
+      <h2 id="sample-reviews-heading" class="sr-only">Sample reviews for development only</h2>
+      <div class="home-section__content"><Testimonials client:visible /></div>
+    </section>
+  )}
+
+  <section class="home-story section-space container-editorial">
+    <div class="home-story__copy">
+      <SectionHeading align="start" label="The Velore story" title="A story still being shaped." />
+      <p>Approved brand history and creative notes will be added when supplied by Velore.</p>
+      <a class="home-section__link" href="/about">About the brand <span aria-hidden="true">↗</span></a>
+    </div>
+    <div class="home-story__monogram" aria-hidden="true">V</div>
+  </section>
+</BaseLayout>
+
+<style>
+  .home-section__content {
+    margin-block-start: clamp(2rem, 4vw, 3.5rem);
+  }
+
+  .home-section__link {
+    display: inline-flex;
+    gap: 0.65rem;
+    align-items: center;
+    margin-block-start: 1.25rem;
+    color: var(--gold);
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .home-families {
+    border-block: 1px solid rgb(197 160 89 / 10%);
+    background: #0e0e0e;
+  }
+
+  .gender-quick-filters {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: .65rem;
+    margin-block: 1.75rem;
+  }
+
+  .gender-quick-filters a {
+    display: inline-flex;
+    min-width: 8rem;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: .65rem .75rem;
+    border: 1px solid rgb(197 160 89 / 38%);
+    color: var(--ivory);
+    font-size: .65rem;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+    transition: border-color .2s, color .2s;
+  }
+
+  .gender-quick-filters a:hover { border-color: var(--gold-light); color: var(--gold-light); }
+
+  .home-discovery {
+    overflow: hidden;
+    border-block: 1px solid rgb(197 160 89 / 16%);
+    background: radial-gradient(ellipse at 75% 45%, rgb(197 160 89 / 8%), transparent 42%), #0a0a0a;
+  }
+
+  .home-discovery__inner {
+    display: flex;
+    min-height: 28rem;
+    align-items: center;
+    justify-content: space-between;
+    gap: 3rem;
+  }
+
+  .home-discovery__copy {
+    max-width: 34rem;
+  }
+
+  .home-discovery__copy h2 {
+    margin-block: 1rem;
+    font-size: clamp(2.5rem, 5vw, 4.6rem);
+  }
+
+  .home-discovery__copy > p:not(.eyebrow) {
+    margin-block-end: 1.7rem;
+    color: var(--ivory-dim);
+    max-width: 42ch;
+  }
+
+  .home-discovery__art {
+    position: relative;
+    display: grid;
+    width: min(30rem, 40vw);
+    aspect-ratio: 1;
+    flex: 0 0 auto;
+    place-items: center;
+  }
+
+  .home-discovery__orbit {
+    position: absolute;
+    border: 1px solid rgb(197 160 89 / 30%);
+    border-radius: 50%;
+  }
+
+  .home-discovery__orbit--outer {
+    inset: 4%;
+  }
+
+  .home-discovery__orbit--inner {
+    inset: 18%;
+    border-color: rgb(197 160 89 / 45%);
+  }
+
+  .home-discovery__mark {
+    color: var(--gold);
+    font: 300 clamp(7rem, 18vw, 15rem)/1 'Cormorant Garamond', Georgia, serif;
+  }
+
+  .home-discovery__caption {
+    position: absolute;
+    inset-block-end: 16%;
+    color: var(--ivory-dim);
+    font-size: 0.55rem;
+    letter-spacing: 0.35em;
+  }
+
+  .home-story {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 3rem;
+  }
+
+  .home-story__copy {
+    max-width: 42rem;
+  }
+
+  .home-story__copy > p {
+    margin-block: 1.5rem 0.8rem;
+    color: var(--ivory-dim);
+  }
+
+  .home-story__monogram {
+    color: rgb(197 160 89 / 20%);
+    font: 300 clamp(8rem, 22vw, 20rem)/0.8 'Cormorant Garamond', Georgia, serif;
+  }
+
+  @media (max-width: 640px) {
+    .home-discovery__inner {
+      min-height: auto;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0;
+    }
+
+    .home-discovery__art {
+      width: min(25rem, 100%);
+      margin-inline: auto;
+    }
+
+    .home-story__monogram {
+      display: none;
+    }
+  }
+</style>

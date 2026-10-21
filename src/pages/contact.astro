@@ -1,0 +1,17 @@
+---
+export const prerender = true;
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import SectionHeading from '@/components/astro/SectionHeading.astro';
+import ContactLinks from '@/components/react/social/ContactLinks';
+import '@/styles/contact.css';
+const initialInstagramHandle = import.meta.env.PUBLIC_INSTAGRAM_HANDLE?.trim() || 'velo.re15';
+const initialWhatsappNumber = import.meta.env.PUBLIC_WHATSAPP_NUMBER?.trim() || '';
+---
+<BaseLayout title="Contact Velore" description="Contact Velore through Instagram or WhatsApp to ask about a fragrance order inquiry.">
+  <section class="contact-page section-space container-editorial">
+    <SectionHeading label="Get in touch" title="Questions before you choose?" />
+    <p class="contact-page__intro">Reach Velore directly to ask about a fragrance, availability or delivery information.</p>
+    <ContactLinks client:load initialInstagramHandle={initialInstagramHandle} initialWhatsappNumber={initialWhatsappNumber} />
+    <p class="contact-page__note">Orders are arranged by inquiry; no checkout or payment is collected on this site.</p>
+  </section>
+</BaseLayout>

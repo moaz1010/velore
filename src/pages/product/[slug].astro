@@ -1,0 +1,185 @@
+---
+export const prerender = false;
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import ProductCard from '@/components/astro/ProductCard.astro';
+import ProductGallery from '@/components/react/product/ProductGallery';
+import ProductBuyBox from '@/components/react/product/ProductBuyBox';
+import FragranceNotes from '@/components/react/product/FragranceNotes';
+import { findPublishedProduct } from '@/lib/services/product.service';
+import { formatEGP, getLowestPrice } from '@/lib/format';
+import type { ProductDetailResult } from '@/types/api';
+import '@/styles/product.css';
+
+const slug = Astro.params.slug ?? '';
+let detail: ProductDetailResult | null = null;
+let unavailable = false;
+try {
+  detail = await findPublishedProduct(slug);
+} catch {
+  unavailable = true;
+  Astro.response.status = 503;
+}
+if (!detail && !unavailable) Astro.response.status = 404;
+const product = detail?.product;
+const included = detail?.included ?? [];
+const related = detail?.related ?? [];
+const primaryImage = product?.images.find((image) => image.isPrimary && !image.isPlaceholder);
+const displayName = product?.name ?? (unavailable ? 'Fragrance unavailable' : 'Fragrance not found');
+const siteOrigin = import.meta.env.PUBLIC_SITE_URL?.trim().replace(/\/$/, '');
+const canonicalProductUrl = siteOrigin && product ? new URL(`/product/${product.slug}`, siteOrigin).toString() : undefined;
+const lowestPrice = product ? getLowestPrice(product.variants) : null;
+const offerItems = product?.variants.map((variant) => ({
+  '@type': 'Offer',
+  price: String(variant.priceEGP),
+  priceCurrency: 'EGP',
+  sku: variant.sku,
+  availability: variant.stock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+  ...(canonicalProductUrl ? { url: canonicalProductUrl } : {}),
+}));
+const productJsonLd = product && !product.isPlaceholder && canonicalProductUrl ? {
+  '@context': 'https://schema.org',
+  '@type': 'Product',
+  name: product.name,
+  description: product.description,
+  brand: { '@type': 'Brand', name: 'Velore' },
+  ...(product.isPlaceholder ? {} : primaryImage ? { image: new URL(primaryImage.url, siteOrigin).toString() } : {}),
+  sku: product.variants[0]?.sku,
+  url: canonicalProductUrl,
+  offers: offerItems,
+} : undefined;
+const safeJsonLd = productJsonLd ? JSON.stringify(productJsonLd).replace(/</g, '\\u003c') : undefined;
+const genderLabel = product?.gender === 'him' ? 'For him' : product?.gender === 'her' ? 'For her' : 'Unisex';
+const seasonLabels: Record<string, { label: string; path: string }> = {
+  spring: { label: 'Spring', path: 'M12 20V9m0 4c-4 0-6-2-6-5 4 0 6 2 6 5Zm0-2c0-4 2-6 5-6 0 4-1 6-5 6Z' },
+  summer: { label: 'Summer', path: 'M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M18.4 5.6 17 7M7 17l-1.4 1.4M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z' },
+  autumn: { label: 'Autumn', path: 'M20 4c-8 0-13 3-13 9 0 3 2 5 5 5 6 0 8-6 8-14ZM4 20c3-4 6-7 11-10' },
+  winter: { label: 'Winter', path: 'M12 3v18m-7-14 14 8M5 15l14-8m-10-2 3 2 3-2m-6 14 3-2 3 2' },
+};
+const occasionLabels: Record<string, { label: string; path: string }> = {
+  day: { label: 'Day', path: 'M12 3v2m0 14v2M3 12h2m14 0h2m-14.4-6.4L8 9m8 6 1.4 1.4m0-10.8L16 9m-8 6-1.4 1.4M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z' },
+  night: { label: 'Night', path: 'M19 15a8 8 0 0 1-10-10 8 8 0 1 0 10 10Z' },
+  office: { label: 'Office', path: 'M4 20h16M6 20V7l6-3 6 3v13M9 9h1m4 0h1m-6 4h1m4 0h1m-5 7v-3h2v3' },
+  evening: { label: 'Evening', path: 'M5 4h14l-2 8a5 5 0 0 1-10 0L5 4Zm7 13v3m-4 0h8M5 4l7 6 7-6' },
+};
+const formattedLowest = lowestPrice === null ? null : formatEGP(lowestPrice);
+---
+<BaseLayout
+  title={product?.seo.title ?? `${displayName} | Velore`}
+  description={product?.seo.description ?? product?.description ?? 'Explore a Velore fragrance and build an order inquiry.'}
+  image={!product?.isPlaceholder && primaryImage ? primaryImage.url : undefined}
+>
+  {safeJsonLd && <script type="application/ld+json" set:html={safeJsonLd} />}
+  {!product ? (
+    <section class="product-page container-editorial" aria-labelledby="product-unavailable-title">
+      <a class="product-breadcrumb" href="/shop">← Back to the collection</a>
+      <h1 id="product-unavailable-title">{unavailable ? 'This fragrance is temporarily unavailable.' : 'This fragrance could not be found.'}</h1>
+      <p class="product-info__description">{unavailable ? 'Please try again shortly.' : 'It may have been removed from the collection.'}</p>
+      <a class="button button--outline" href="/shop">Explore the collection</a>
+    </section>
+  ) : (
+    <>
+      <article class="product-page container-editorial">
+        <nav class="product-breadcrumb" aria-label="Breadcrumb">
+          <a href="/shop">Collection</a><span aria-hidden="true">/</span><span>{product.name}</span>
+        </nav>
+        {detail?.source === 'development-placeholder' && <p class="sample-catalog-note" role="status">Development sample catalog — not real Velore inventory.</p>}
+        <div class="product-detail">
+          <ProductGallery client:visible product={product} />
+          <div class="product-info">
+            <div class="product-info__meta">
+              <span class="product-info__tag">{genderLabel}</span>
+              <span class="product-info__tag">{product.concentration}</span>
+              {product.badges.map((badge) => <span class="product-info__tag">{badge}</span>)}
+              {product.isPlaceholder && <span class="sample-label">Sample</span>}
+            </div>
+            <h1>{product.name}</h1>
+            {product.tagline && <p class="product-info__tagline">{product.tagline}</p>}
+            <p class="product-info__description">{product.description}</p>
+            <ProductBuyBox client:load product={product} />
+
+            <div class="product-highlights" aria-label="Fragrance performance">
+              <div class="product-meter">
+                <div class="product-meter__top"><span>Longevity</span><strong>{product.longevity.hours} hours · {product.longevity.rating}/5</strong></div>
+                <div class="product-meter__track" role="meter" aria-label="Longevity rating" aria-valuemin="1" aria-valuemax="5" aria-valuenow={product.longevity.rating}>
+                  <div class="product-meter__fill" style={`width:${(product.longevity.rating / 5) * 100}%`}></div>
+                </div>
+              </div>
+              <div class="product-meter">
+                <div class="product-meter__top"><span>Sillage</span><strong>{product.sillage}/5</strong></div>
+                <div class="product-meter__track" role="meter" aria-label="Sillage rating" aria-valuemin="1" aria-valuemax="5" aria-valuenow={product.sillage}>
+                  <div class="product-meter__fill" style={`width:${(product.sillage / 5) * 100}%`}></div>
+                </div>
+              </div>
+            </div>
+
+            <section class="product-accords" aria-labelledby="accords-title">
+              <h2 id="accords-title">Fragrance accords</h2>
+              {product.accords.length > 0 ? (
+                <div class="product-accords__list">
+                  {product.accords.map((accord) => (
+                    <div class="product-accord">
+                      <span class="product-accord__name">{accord.name}</span>
+                      <div class="product-accord__track" role="progressbar" aria-label={`${accord.name} accord strength`} aria-valuemin="0" aria-valuemax="100" aria-valuenow={accord.strength}>
+                        <div class="product-accord__fill" style={`width:${accord.strength}%`}></div>
+                      </div>
+                      <span class="product-accord__value">{accord.strength}%</span>
+                    </div>
+                  ))}
+                </div>
+              ) : <p class="product-info__description">Accord details have not been provided.</p>}
+            </section>
+
+            <div class="product-context">
+              <section class="product-context__group" aria-labelledby="season-title">
+                <h3 id="season-title">Seasons</h3>
+                <div class="product-chips">
+                  {product.seasons.length > 0 ? product.seasons.map((season) => {
+                    const icon = seasonLabels[season];
+                    return <span class="product-chip"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d={icon.path} stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round" /></svg>{icon.label}</span>;
+                  }) : <span class="product-chip">Not provided</span>}
+                </div>
+              </section>
+              <section class="product-context__group" aria-labelledby="occasion-title">
+                <h3 id="occasion-title">Occasions</h3>
+                <div class="product-chips">
+                  {product.occasions.length > 0 ? product.occasions.map((occasion) => {
+                    const icon = occasionLabels[occasion];
+                    return <span class="product-chip"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d={icon.path} stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round" /></svg>{icon.label}</span>;
+                  }) : <span class="product-chip">Not provided</span>}
+                </div>
+              </section>
+            </div>
+            {formattedLowest && <p class="product-jsonld-note">From {formattedLowest} · EGP whole-pound pricing.</p>}
+          </div>
+        </div>
+      </article>
+
+      <section class="product-notes" aria-labelledby="product-notes-title">
+        <div class="container-editorial">
+          <h2 id="product-notes-title">The notes</h2>
+          <FragranceNotes client:visible notes={product.notes} />
+        </div>
+      </section>
+
+      {included.length > 0 && (
+        <section class="product-included section-space">
+          <div class="container-editorial">
+            <h2>Inside this discovery set</h2>
+            <div class="product-included__list">
+              {included.map((item) => <article class="product-included__item"><h3>{item.name}</h3><p>{item.concentration} · {item.isPlaceholder ? 'Sample fragrance' : 'Included fragrance'}</p></article>)}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {related.length > 0 && (
+        <section class="product-related container-editorial">
+          <h2>{product.type === 'discovery-set' ? 'More discovery sets' : 'You may also explore'}</h2>
+          <div class="product-related__grid">
+            {related.map((relatedProduct) => <ProductCard product={relatedProduct} />)}
+          </div>
+        </section>
+      )}
+    </>
+  )}
+</BaseLayout>
