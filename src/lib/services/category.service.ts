@@ -14,11 +14,16 @@ interface LeanCategory extends CategoryRecord {
 }
 
 function toPublicCategory(category: LeanCategory): PublicCategory {
-  const { _id, parentId, ...fields } = category;
   return {
-    ...fields,
-    id: _id.toString(),
-    ...(parentId ? { parentId: parentId.toString() } : {}),
+    id: category._id.toString(),
+    slug: category.slug,
+    name: category.name,
+    kind: category.kind,
+    ...(category.description !== undefined ? { description: category.description } : {}),
+    ...(category.image !== undefined ? { image: category.image } : {}),
+    order: category.order,
+    ...(category.parentId ? { parentId: category.parentId.toString() } : {}),
+    isActive: category.isActive,
     children: [],
   };
 }
@@ -37,7 +42,10 @@ function categoryTree(categories: PublicCategory[]): PublicCategory[] {
 export async function listPublicCategories(): Promise<PublicCategory[]> {
   try {
     await connectToDatabase();
-    const documents = await CategoryModel.find({ isActive: true }).sort({ order: 1, name: 1 }).lean();
+    const documents = await CategoryModel.find({ isActive: true })
+      .select('slug name kind description image order parentId isActive')
+      .sort({ order: 1, name: 1 })
+      .lean();
     const categories = documents.map((document) => toPublicCategory(document as unknown as LeanCategory));
     return categoryTree(categories);
   } catch (error) {
