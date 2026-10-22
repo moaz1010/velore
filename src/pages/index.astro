@@ -5,6 +5,7 @@ import SectionHeading from '@/components/astro/SectionHeading.astro';
 import Logo from '@/components/astro/Logo.astro';
 import Marquee from '@/components/astro/Marquee.astro';
 import HeroSection from '@/components/react/hero/HeroSection';
+import AuroraBackgroundDemo from '@/components/react/home/AuroraBackgroundDemo';
 import FeaturedCollection from '@/components/react/home/FeaturedCollection';
 import FragranceFamilies from '@/components/react/home/FragranceFamilies';
 import Testimonials from '@/components/react/social/Testimonials';
@@ -72,6 +73,12 @@ import '@/styles/catalog.css';
     </div>
     <Logo variant="monogram" width={300} height={305} class="home-story__monogram" />
   </section>
+
+  {import.meta.env.DEV && (
+    <section class="home-aurora-demo section-space" aria-label="Development-only Aurora component preview">
+      <AuroraBackgroundDemo client:visible />
+    </section>
+  )}
 </BaseLayout>
 
 <style>

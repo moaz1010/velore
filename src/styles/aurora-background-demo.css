@@ -1,0 +1,44 @@
+.aurora-background-demo {
+  display: flex;
+  min-height: min(40rem, 88svh);
+  align-items: center;
+  justify-content: center;
+  border-block: 1px solid rgb(197 160 89 / 14%);
+  background: #0b0b0b;
+}
+
+.aurora-background-demo .velore-aurora__content {
+  width: 100%;
+}
+
+.aurora-background-demo__eyebrow {
+  margin: 0;
+  color: var(--gold-light);
+}
+
+.aurora-background-demo__title {
+  max-width: 16ch;
+  margin: 0;
+  color: var(--ivory);
+  font: 500 clamp(2.6rem, 7vw, 5.8rem) / 0.96 'Cormorant Garamond', Georgia, serif;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
+
+.aurora-background-demo__copy {
+  max-width: 34rem;
+  margin: 0.5rem auto 1rem;
+  color: var(--ivory-dim);
+  font-size: clamp(0.86rem, 1.4vw, 1rem);
+  line-height: 1.7;
+}
+
+.aurora-background-demo__cta {
+  margin-block-start: 0.75rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aurora-background-demo__cta {
+    transition: none;
+  }
+}

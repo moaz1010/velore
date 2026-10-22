@@ -31,3 +31,7 @@
 
 - Self-hosted font files were retrieved from the Google Fonts CSS endpoint `https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400&family=Plus+Jakarta+Sans:wght@400;500&display=swap`; the stylesheet points to the corresponding `fonts.gstatic.com` WOFF2 files. The browser does not request Google Fonts at runtime.
 - Image search surfaced `https://www.veloreperfumes.com` (page identifies an India-focused brand with prices in rupees and cities such as Delhi) and `https://www.veloreparfumehouse.com` (page identifies founder Herné Van Staden). Neither was confirmed as the Egyptian client `@velo.re15`; both are excluded from the site and no assets/copy were reused.
+
+## Aceternity Aurora demo adaptation
+
+- The supplied `aurora-background-demo` registry item imports `motion/react`, a separate Aurora wrapper and a `cn` utility. This project already has Motion and an Aceternity-derived Aurora wrapper used by the hero; it is TypeScript + Astro + Tailwind CSS 3.4 and does not use shadcn/ui. Reuse the existing wrapper, avoid unnecessary dependencies or a Tailwind migration, keep the demo visible only in development, and preserve the project’s reduced-motion behavior and obsidian/gold palette. Source: https://ui.aceternity.com/registry/aurora-background-demo.json.
