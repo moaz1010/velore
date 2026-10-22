@@ -244,14 +244,29 @@ export function AdminSettings() {
       <section className="admin-panel admin-form-section"><div className="admin-panel-heading"><div><p className="admin-eyebrow">CONTACT & DELIVERY</p><h2>Public store details</h2></div></div>
         <p className="admin-muted admin-section-note">Use verified brand details only. Customer orders remain WhatsApp inquiries; delivery zones are handled by GremLins and this is editable text, not shipping-rate logic.</p>
         <div className="admin-form-grid">
-          <label className="admin-field"><span>WhatsApp number · digits only, with country code</span><input inputMode="numeric" autoComplete="tel" pattern="[0-9]{8,15}" maxLength={15} value={form.whatsappNumber} onChange={(event) => setForm((current) => ({ ...current, whatsappNumber: event.currentTarget.value.replace(/\D/g, '') }))} placeholder="Country code + number" /><small>The order link uses this verified number. Never enter a placeholder number.</small></label>
-          <label className="admin-field"><span>Instagram handle</span><div className="admin-input-prefix"><span>@</span><input maxLength={30} value={form.instagramHandle} onChange={(event) => setForm((current) => ({ ...current, instagramHandle: event.currentTarget.value.replace(/^@/, '') }))} /></div></label>
-          <label className="admin-field admin-field--wide"><span>Delivery note</span><textarea rows={4} maxLength={1200} value={form.deliveryNote} onChange={(event) => setForm((current) => ({ ...current, deliveryNote: event.currentTarget.value }))} placeholder="Add verified delivery information only." /></label>
+          <label className="admin-field"><span>WhatsApp number · digits only, with country code</span><input inputMode="numeric" autoComplete="tel" pattern="[0-9]{8,15}" maxLength={15} value={form.whatsappNumber} onChange={(event) => {
+            const whatsappNumber = event.currentTarget.value.replace(/\D/g, '');
+            setForm((current) => ({ ...current, whatsappNumber }));
+          }} placeholder="Country code + number" /><small>The order link uses this verified number. Never enter a placeholder number.</small></label>
+          <label className="admin-field"><span>Instagram handle</span><div className="admin-input-prefix"><span>@</span><input maxLength={30} value={form.instagramHandle} onChange={(event) => {
+            const instagramHandle = event.currentTarget.value.replace(/^@/, '');
+            setForm((current) => ({ ...current, instagramHandle }));
+          }} /></div></label>
+          <label className="admin-field admin-field--wide"><span>Delivery note</span><textarea rows={4} maxLength={1200} value={form.deliveryNote} onChange={(event) => {
+            const deliveryNote = event.currentTarget.value;
+            setForm((current) => ({ ...current, deliveryNote }));
+          }} placeholder="Add verified delivery information only." /></label>
         </div>
       </section>
       <section className="admin-panel admin-form-section"><div className="admin-panel-heading"><div><p className="admin-eyebrow">ANNOUNCEMENT</p><h2>Announcement bar</h2></div></div>
-        <div className="admin-form-grid"><label className="admin-field admin-field--wide"><span>Announcement text</span><input maxLength={180} value={form.announcementBar?.text ?? ''} onChange={(event) => setForm((current) => ({ ...current, announcementBar: { text: event.currentTarget.value, enabled: current.announcementBar?.enabled ?? false } }))} /></label></div>
-        <label className="admin-checkbox-label"><input type="checkbox" checked={form.announcementBar?.enabled ?? false} onChange={(event) => setForm((current) => ({ ...current, announcementBar: { text: current.announcementBar?.text ?? '', enabled: event.currentTarget.checked } }))} /><span>Display the announcement bar on public pages</span></label>
+        <div className="admin-form-grid"><label className="admin-field admin-field--wide"><span>Announcement text</span><input maxLength={180} value={form.announcementBar?.text ?? ''} onChange={(event) => {
+          const text = event.currentTarget.value;
+          setForm((current) => ({ ...current, announcementBar: { text, enabled: current.announcementBar?.enabled ?? false } }));
+        }} /></label></div>
+        <label className="admin-checkbox-label"><input type="checkbox" checked={form.announcementBar?.enabled ?? false} onChange={(event) => {
+          const enabled = event.currentTarget.checked;
+          setForm((current) => ({ ...current, announcementBar: { text: current.announcementBar?.text ?? '', enabled } }));
+        }} /><span>Display the announcement bar on public pages</span></label>
       </section>
       <div className="admin-save-bar"><button className="admin-button admin-button--primary" type="submit" disabled={saveMutation.isPending}>{saveMutation.isPending ? 'Saving…' : 'Save store settings'}</button></div>
     </form>
