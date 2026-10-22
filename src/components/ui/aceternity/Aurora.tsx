@@ -1,23 +1,34 @@
-import type { ReactNode } from 'react';
+import type { ComponentPropsWithoutRef } from 'react';
 
-interface Props {
-  children: ReactNode;
-  className?: string;
-}
+type AuroraProps = ComponentPropsWithoutRef<'div'> & {
+  showRadialGradient?: boolean;
+};
 
 /**
  * Velore adaptation of Aceternity UI's Aurora Background.
- * Reference: https://ui.aceternity.com/components/aurora-background
- * The source's background-position animation is replaced with transform/opacity
- * drift to follow the approved motion and reduced-motion requirements.
+ * Recreates the source's layered repeating gradients, blur, fixed overlay,
+ * difference blend, radial mask, and slow sweep in the site's gold palette.
+ * The sweep uses only transform/opacity and is disabled for reduced motion.
+ * Source: https://ui.aceternity.com/components/aurora-background
  */
-export default function Aurora({ children, className = '' }: Props) {
+export default function Aurora({
+  children,
+  className,
+  showRadialGradient = true,
+  ...props
+}: AuroraProps) {
+  const classes = [
+    'velore-aurora',
+    showRadialGradient ? 'velore-aurora--radial' : '',
+    className ?? '',
+  ]
+    .filter(Boolean)
+    .join(' ');
+
   return (
-    <div className={`velore-aurora ${className}`.trim()}>
+    <div {...props} className={classes}>
       <div className="velore-aurora__sky" aria-hidden="true">
-        <span className="velore-aurora__ribbon velore-aurora__ribbon--one" />
-        <span className="velore-aurora__ribbon velore-aurora__ribbon--two" />
-        <span className="velore-aurora__ribbon velore-aurora__ribbon--three" />
+        <div className="velore-aurora__wash" />
       </div>
       <div className="velore-aurora__content">{children}</div>
     </div>

@@ -6,42 +6,80 @@
 }
 
 .velore-aurora__sky {
+  --velore-aurora: repeating-linear-gradient(
+    100deg,
+    #8e7340 10%,
+    #d4af37 15%,
+    #c5a059 20%,
+    #d4af37 25%,
+    #8e7340 30%
+  );
+  --velore-aurora-dark: repeating-linear-gradient(
+    100deg,
+    #0b0b0b 0%,
+    #0b0b0b 7%,
+    transparent 10%,
+    transparent 12%,
+    #0b0b0b 16%
+  );
+  --velore-aurora-light: repeating-linear-gradient(
+    100deg,
+    #d4af37 0%,
+    #c5a059 7%,
+    transparent 10%,
+    transparent 12%,
+    #d4af37 16%
+  );
   position: absolute;
   z-index: 0;
-  inset: -18%;
+  inset: 0;
   overflow: hidden;
   pointer-events: none;
   opacity: 0.82;
 }
 
-.velore-aurora__ribbon {
+.velore-aurora--radial .velore-aurora__sky {
+  mask-image: radial-gradient(ellipse at 100% 0%, #000 10%, transparent 70%);
+  -webkit-mask-image: radial-gradient(ellipse at 100% 0%, #000 10%, transparent 70%);
+}
+
+.velore-aurora__wash {
   position: absolute;
-  display: block;
-  width: 122%;
-  height: 56%;
-  border-radius: 50%;
-  filter: blur(42px);
-  transform-origin: center;
+  inset: -18%;
+  background-image: var(--velore-aurora-dark), var(--velore-aurora);
+  background-position: 50% 50%, 50% 50%;
+  background-size: 300% 200%, 200% 100%;
+  filter: blur(10px) saturate(1.15);
+  opacity: 0.62;
+}
+
+.velore-aurora__wash::before,
+.velore-aurora__wash::after {
+  position: absolute;
+  inset: -8%;
+  content: '';
+  background-position: 50% 50%, 50% 50%;
   will-change: transform, opacity;
 }
 
-.velore-aurora__ribbon--one {
-  inset: -4% auto auto -12%;
-  background: linear-gradient(112deg, transparent 18%, rgb(142 115 64 / 7%) 28%, rgb(197 160 89 / 24%) 39%, rgb(212 175 55 / 10%) 48%, transparent 62%);
-  animation: velore-aurora-sweep-one 34s ease-in-out infinite alternate;
+.velore-aurora__wash::before {
+  background-image: var(--velore-aurora-light), var(--velore-aurora);
+  background-size: 300% 200%, 200% 100%;
+  background-attachment: fixed;
+  filter: blur(12px);
+  mix-blend-mode: screen;
+  opacity: 0.5;
+  animation: velore-aurora-sweep 60s ease-in-out infinite alternate;
 }
 
-.velore-aurora__ribbon--two {
-  inset: 4% -16% auto auto;
-  background: linear-gradient(116deg, transparent 15%, rgb(197 160 89 / 7%) 28%, rgb(212 175 55 / 19%) 39%, rgb(142 115 64 / 12%) 51%, transparent 66%);
-  animation: velore-aurora-sweep-two 42s ease-in-out -11s infinite alternate;
-}
-
-.velore-aurora__ribbon--three {
-  inset: 12% auto auto -4%;
-  height: 44%;
-  background: linear-gradient(108deg, transparent 20%, rgb(142 115 64 / 8%) 32%, rgb(197 160 89 / 18%) 45%, rgb(212 175 55 / 8%) 55%, transparent 70%);
-  animation: velore-aurora-sweep-three 50s ease-in-out -23s infinite alternate;
+.velore-aurora__wash::after {
+  background-image: var(--velore-aurora-dark), var(--velore-aurora);
+  background-size: 200% 100%, 100% 100%;
+  background-attachment: fixed;
+  filter: blur(10px);
+  mix-blend-mode: difference;
+  opacity: 0.4;
+  animation: velore-aurora-counter-sweep 74s ease-in-out -18s infinite alternate;
 }
 
 .velore-aurora__content {
@@ -49,22 +87,16 @@
   z-index: 1;
 }
 
-@keyframes velore-aurora-sweep-one {
-  0% { transform: translate3d(-3%, -2%, 0) rotate(-17deg) scale(0.95); opacity: 0.32; }
-  55% { transform: translate3d(3%, 3%, 0) rotate(-11deg) scale(1.02); opacity: 0.72; }
-  100% { transform: translate3d(7%, -1%, 0) rotate(-15deg) scale(0.98); opacity: 0.42; }
+@keyframes velore-aurora-sweep {
+  0% { transform: translate3d(-4%, -2%, 0) rotate(-4deg) scale(1.02); opacity: 0.26; }
+  50% { transform: translate3d(3%, 2%, 0) rotate(2deg) scale(1.1); opacity: 0.52; }
+  100% { transform: translate3d(-4%, -2%, 0) rotate(-4deg) scale(1.02); opacity: 0.26; }
 }
 
-@keyframes velore-aurora-sweep-two {
-  0% { transform: translate3d(4%, -3%, 0) rotate(13deg) scale(1.02); opacity: 0.28; }
-  50% { transform: translate3d(-2%, 2%, 0) rotate(17deg) scale(0.96); opacity: 0.62; }
-  100% { transform: translate3d(-6%, -2%, 0) rotate(10deg) scale(1.04); opacity: 0.36; }
-}
-
-@keyframes velore-aurora-sweep-three {
-  0% { transform: translate3d(-2%, 2%, 0) rotate(-9deg) scale(1.04); opacity: 0.24; }
-  60% { transform: translate3d(3%, -2%, 0) rotate(-15deg) scale(0.97); opacity: 0.56; }
-  100% { transform: translate3d(6%, 2%, 0) rotate(-7deg) scale(1.01); opacity: 0.3; }
+@keyframes velore-aurora-counter-sweep {
+  0% { transform: translate3d(3%, 2%, 0) rotate(4deg) scale(1.06); opacity: 0.22; }
+  50% { transform: translate3d(-3%, -2%, 0) rotate(-3deg) scale(1.13); opacity: 0.42; }
+  100% { transform: translate3d(3%, 2%, 0) rotate(4deg) scale(1.06); opacity: 0.22; }
 }
 
 .velore-spotlight {
@@ -193,15 +225,19 @@
   .hero-section__content { padding-block: 4rem 6rem; }
   .hero-section__copy { max-width: 28rem; }
   .button { min-height: 3rem; padding: 0.7rem 1rem; font-size: 0.63rem; }
-  .velore-aurora__ribbon { filter: blur(32px); }
+  .velore-aurora__wash { filter: blur(7px) saturate(1.05); }
+  .velore-aurora__wash::before { filter: blur(8px); }
+  .velore-aurora__wash::after { filter: blur(7px); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .velore-aurora__ribbon,
+  .velore-aurora__wash::before,
+  .velore-aurora__wash::after,
   .button,
   .magnet-button,
   .gold-glow-border,
   .shiny-text::after { animation: none; transition: none; }
-  .velore-aurora__ribbon { transform: none; opacity: 0.42; }
+  .velore-aurora__wash::before,
+  .velore-aurora__wash::after { transform: none; opacity: 0.35; }
   .shiny-text::after { display: none; }
 }

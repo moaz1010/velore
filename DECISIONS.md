@@ -35,3 +35,7 @@
 ## Aceternity Aurora demo adaptation
 
 - The supplied `aurora-background-demo` registry item imports `motion/react`, a separate Aurora wrapper and a `cn` utility. This project already has Motion and an Aceternity-derived Aurora wrapper used by the hero; it is TypeScript + Astro + Tailwind CSS 3.4 and does not use shadcn/ui. Reuse the existing wrapper, avoid unnecessary dependencies or a Tailwind migration, keep the demo visible only in development, and preserve the project’s reduced-motion behavior and obsidian/gold palette. Source: https://ui.aceternity.com/registry/aurora-background-demo.json.
+
+## Aurora fidelity update
+
+- The follow-up request asks for the full Aceternity Aurora visual effect. The shared wrapper now includes 100-degree repeating gradients, blurred layers, a fixed-attachment overlay with difference blending, an optional radial mask, and two slow sweeps. The source gradient colors are mapped to Velore gold/ivory; sweeps use transform/opacity instead of background-position to preserve the approved performance rule and are disabled for reduced-motion users. Source: https://ui.aceternity.com/registry/aurora-background.json.
