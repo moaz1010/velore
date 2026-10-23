@@ -23,35 +23,43 @@ const inquiryLineSchema = z
 
 export type InquiryLine = z.infer<typeof inquiryLineSchema>;
 
-function createSafeStorage(): object {
-  const memory: Record<string, string> = Object.create(null) as Record<string, string>;
-  return {
-    getItem(key: string): string | null {
+function createSafeStorage(): PersistentStore {
+  const memory = Object.create(null) as PersistentStore;
+  return new Proxy(memory, {
+    get(target, property, receiver) {
+      if (typeof property !== 'string') return Reflect.get(target, property, receiver) as string;
       try {
-        return window.localStorage.getItem(key);
+        return window.localStorage.getItem(property) ?? undefined;
       } catch {
-        return memory[key] ?? null;
+        return target[property];
       }
     },
-    setItem(key: string, value: string): void {
+    set(target, property, value) {
+      if (typeof property !== 'string') return Reflect.set(target, property, value);
+      const encoded = String(value);
       try {
-        window.localStorage.setItem(key, value);
+        window.localStorage.setItem(property, encoded);
+        delete target[property];
       } catch {
-        memory[key] = value;
+        target[property] = encoded;
       }
+      return true;
     },
-    removeItem(key: string): void {
+    deleteProperty(target, property) {
+      if (typeof property !== 'string') return Reflect.deleteProperty(target, property);
       try {
-        window.localStorage.removeItem(key);
+        window.localStorage.removeItem(property);
       } catch {
-        delete memory[key];
+        // Keep deletion safe when browser storage is disabled or unavailable.
       }
+      delete target[property];
+      return true;
     },
-  };
+  });
 }
 
 if (typeof window !== 'undefined') {
-  setPersistentEngine(createSafeStorage() as unknown as PersistentStore, windowPersistentEvents);
+  setPersistentEngine(createSafeStorage(), windowPersistentEvents);
 }
 
 const inquiryEncoder: PersistentEncoder<InquiryLine[]> = {
