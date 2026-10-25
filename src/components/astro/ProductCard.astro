@@ -13,7 +13,7 @@ const showPlaceholder = product.isPlaceholder || !primaryImage || primaryImage.i
 const lowestPrice = getLowestPrice(product.variants);
 const genderLabel = product.gender === 'him' ? 'For him' : product.gender === 'her' ? 'For her' : 'Unisex';
 ---
-<article class="product-card">
+<article data-scroll-reveal class="product-card">
   <a class="product-card__link" href={`/product/${product.slug}`} aria-label={`View ${product.name}`}>
     <div class="product-card__visual">
       {showPlaceholder ? (

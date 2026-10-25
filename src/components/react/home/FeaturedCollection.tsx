@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import type { KeyboardEvent as ReactKeyboardEvent } from 'react';
 import ProductCard from '@/components/react/catalog/ProductCard';
 import { publicProductListEnvelopeSchema } from '@/lib/schemas/public.schema';
 import type { PublicProduct } from '@/types/api';
@@ -32,11 +33,20 @@ export default function FeaturedCollection() {
   }, []);
 
   const scroll = (direction: -1 | 1) => {
-    trackRef.current?.scrollBy({ left: direction * Math.max(trackRef.current.clientWidth * 0.78, 260), behavior: 'smooth' });
+    const track = trackRef.current;
+    if (!track) return;
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    track.scrollBy({ left: direction * Math.max(track.clientWidth * 0.78, 260), behavior: reducedMotion ? 'auto' : 'smooth' });
+  };
+
+  const handleCarouselKeyDown = (event: ReactKeyboardEvent<HTMLDivElement>) => {
+    if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+    event.preventDefault();
+    scroll(event.key === 'ArrowLeft' ? -1 : 1);
   };
 
   return (
-    <div className="featured-collection" aria-busy={status === 'loading'}>
+    <div className="featured-collection" aria-busy={status === 'loading'} onKeyDown={handleCarouselKeyDown}>
       {source === 'development-placeholder' && (
         <p className="sample-catalog-note" role="status">Development sample catalog — not real Velore inventory.</p>
       )}
@@ -51,7 +61,7 @@ export default function FeaturedCollection() {
             <button type="button" className="carousel-arrow" onClick={() => scroll(-1)} aria-label="Previous featured fragrances">←</button>
             <button type="button" className="carousel-arrow" onClick={() => scroll(1)} aria-label="Next featured fragrances">→</button>
           </div>
-          <div ref={trackRef} className="featured-collection__track" aria-label="Featured fragrances">
+          <div ref={trackRef} className="featured-collection__track" role="region" aria-roledescription="carousel" aria-label="Featured fragrances" tabIndex={0}>
             {products.map((product) => <ProductCard product={product} key={product.id} />)}
           </div>
         </>

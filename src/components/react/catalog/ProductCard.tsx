@@ -12,7 +12,7 @@ export default function ProductCard({ product }: Props) {
   const genderLabel = product.gender === 'him' ? 'For him' : product.gender === 'her' ? 'For her' : 'Unisex';
 
   return (
-    <article className="product-card gold-glow-border">
+    <article data-scroll-reveal className="product-card gold-glow-border">
       <a className="product-card__link" href={`/product/${product.slug}`} aria-label={`View ${product.name}`}>
         <div className="product-card__visual">
           {showPlaceholder ? (

@@ -10,8 +10,8 @@ const initialWhatsappNumber = import.meta.env.PUBLIC_WHATSAPP_NUMBER?.trim() || 
 <BaseLayout title="Contact Velore" description="Contact Velore through Instagram or WhatsApp to ask about a fragrance order inquiry.">
   <section class="contact-page section-space container-editorial">
     <SectionHeading label="Get in touch" title="Questions before you choose?" />
-    <p class="contact-page__intro">Reach Velore directly to ask about a fragrance, availability or delivery information.</p>
-    <ContactLinks client:load initialInstagramHandle={initialInstagramHandle} initialWhatsappNumber={initialWhatsappNumber} />
-    <p class="contact-page__note">Orders are arranged by inquiry; no checkout or payment is collected on this site.</p>
+    <p data-scroll-reveal class="contact-page__intro">Reach Velore directly to ask about a fragrance, availability or delivery information.</p>
+    <div data-scroll-reveal><ContactLinks client:load initialInstagramHandle={initialInstagramHandle} initialWhatsappNumber={initialWhatsappNumber} /></div>
+    <p data-scroll-reveal class="contact-page__note">Orders are arranged by inquiry; no checkout or payment is collected on this site.</p>
   </section>
 </BaseLayout>

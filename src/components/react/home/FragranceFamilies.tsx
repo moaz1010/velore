@@ -44,7 +44,7 @@ export default function FragranceFamilies() {
   return (
     <div className="family-grid">
       {families.map((family, index) => (
-        <a className={`family-tile ${tileStyles[family.slug] ?? ''}`} href={`/shop/${family.slug}`} key={family.id}>
+        <a data-scroll-reveal className={`family-tile ${tileStyles[family.slug] ?? ''}`} href={`/shop/${family.slug}`} key={family.id}>
           <span className="family-tile__index">0{index + 1}</span>
           <span className="family-tile__rule" aria-hidden="true" />
           <h3>{family.name}</h3>

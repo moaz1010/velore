@@ -29,7 +29,7 @@ import '@/styles/catalog.css';
   <section class="home-families section-space">
     <div class="container-editorial">
       <SectionHeading label="Find your scent" title="Explore fragrance families" />
-      <nav class="gender-quick-filters" aria-label="Shop by wearer">
+      <nav data-scroll-reveal class="gender-quick-filters" aria-label="Shop by wearer">
         <a href="/shop?gender=him">Him <span aria-hidden="true">↗</span></a>
         <a href="/shop?gender=her">Her <span aria-hidden="true">↗</span></a>
         <a href="/shop?gender=unisex">Unisex <span aria-hidden="true">↗</span></a>
@@ -42,13 +42,13 @@ import '@/styles/catalog.css';
 
   <section class="home-discovery section-space">
     <div class="home-discovery__inner container-editorial">
-      <div class="home-discovery__copy">
+      <div data-scroll-reveal class="home-discovery__copy">
         <p class="eyebrow">A considered introduction</p>
         <h2>Meet the discovery set.</h2>
         <p>Explore a smaller-format sample collection and send an inquiry when you are ready.</p>
         <a class="button button--outline" href="/discovery-sets">Explore discovery sets <span aria-hidden="true">↗</span></a>
       </div>
-      <div class="home-discovery__art" aria-hidden="true">
+      <div data-scroll-reveal class="home-discovery__art" aria-hidden="true">
         <span class="home-discovery__orbit home-discovery__orbit--outer"></span>
         <span class="home-discovery__orbit home-discovery__orbit--inner"></span>
         <Logo variant="monogram" width={190} height={193} class="home-discovery__mark" />
@@ -66,12 +66,14 @@ import '@/styles/catalog.css';
   )}
 
   <section class="home-story section-space container-editorial">
-    <div class="home-story__copy">
+    <div data-scroll-reveal class="home-story__copy">
       <SectionHeading align="start" label="The Velore story" title="A story still being shaped." />
       <p>Approved brand history and creative notes will be added when supplied by Velore.</p>
       <a class="home-section__link" href="/about">About the brand <span aria-hidden="true">↗</span></a>
     </div>
-    <Logo variant="monogram" width={300} height={305} class="home-story__monogram" />
+    <div data-scroll-reveal>
+      <Logo variant="monogram" width={300} height={305} class="home-story__monogram" />
+    </div>
   </section>
 
   {import.meta.env.DEV && (

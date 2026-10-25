@@ -6,24 +6,26 @@ const whatsappNumber = import.meta.env.PUBLIC_WHATSAPP_NUMBER?.trim() || '';
 ---
 <footer class="site-footer">
   <div class="site-footer__inner container-editorial">
-    <div class="site-footer__brand">
+    <div data-scroll-reveal class="site-footer__brand">
       <Logo variant="lockup" width={206} height={172} />
       <p>Fragrance, discovered at your own pace.</p>
     </div>
-    <nav class="site-footer__links" aria-label="Footer navigation">
+    <nav data-scroll-reveal class="site-footer__links" aria-label="Footer navigation">
       <a href="/shop">Collection</a>
       <a href="/discovery-sets">Discovery sets</a>
       <a href="/about">Our story</a>
       <a href="/delivery">Delivery</a>
       <a href="/contact">Contact</a>
     </nav>
-    <FooterDetails
-      client:visible
-      initialInstagramHandle={instagramHandle}
-      initialWhatsappNumber={whatsappNumber}
-    />
+    <div data-scroll-reveal>
+      <FooterDetails
+        client:visible
+        initialInstagramHandle={instagramHandle}
+        initialWhatsappNumber={whatsappNumber}
+      />
+    </div>
   </div>
-  <div class="site-footer__bottom container-editorial">
+  <div data-scroll-reveal class="site-footer__bottom container-editorial">
     <span>© {new Date().getFullYear()} Velore</span>
     <span>Orders are sent by WhatsApp inquiry.</span>
   </div>

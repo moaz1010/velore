@@ -7,7 +7,7 @@ interface Props {
 
 const { label, title, align = 'center' } = Astro.props;
 ---
-<div class:list={['section-heading', `section-heading--${align}`]}>
+<div data-scroll-reveal class:list={['section-heading', `section-heading--${align}`]}>
   <div class="section-heading__label" aria-label={label}>
     <span aria-hidden="true"></span>
     <p class="eyebrow">{label}</p>

@@ -5,6 +5,8 @@ import '@/styles/hero.css';
 import '@/styles/catalog.css';
 import '@/styles/product.css';
 import '@/styles/loader.css';
+import '@/styles/motion.css';
+import '@/styles/scroll-reveal.css';
 import SEO from '@/components/astro/SEO.astro';
 import Header from '@/components/astro/Header.astro';
 import Footer from '@/components/astro/Footer.astro';
@@ -50,5 +52,8 @@ const {
     {!hideChrome && <Header />}
     <main id="main-content"><slot /></main>
     {!hideChrome && <Footer />}
+    <script>
+      import '@/lib/scroll-reveal';
+    </script>
   </body>
 </html>
